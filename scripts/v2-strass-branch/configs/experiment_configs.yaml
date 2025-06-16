@@ -17,6 +17,25 @@ experiments:
           C: 1.0
           max_iter: 1000
           random_state: 42
+      - type: "self_attention"
+        config:
+          d_model: 256
+          n_heads: 8
+          n_layers: 6
+          d_ff: 1024
+          dropout_rate: 0.1
+          learning_rate: 0.0001
+          n_epochs: 150
+          batch_size: 16
+          max_seq_len: 1000
+      - type: "mlp"
+        config:
+          hidden_dims: [512, 256, 128]
+          dropout_rate: 0.3
+          learning_rate: 0.001
+          n_epochs: 100
+          batch_size: 32
+          weight_decay: 0.0001
     
   neural_networks:
     classifiers:

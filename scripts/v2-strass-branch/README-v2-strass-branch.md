@@ -67,6 +67,7 @@ plotly>=5.3.0
 pyyaml>=5.4.0
 joblib>=1.0.0
 tqdm>=4.62.0
+
 ```
 
 ## 🏃‍♂️ Quick Start
@@ -79,6 +80,48 @@ python main.py --config config/experiment_configs.yaml --experiment baseline --s
 
 # Run neural network experiment
 python main.py --config config/experiment_configs.yaml --experiment neural_networks --subjects 01 02 03 04 05 --output results/neural --plot
+```
+
+### Detailed Usage
+```powershell
+#powershell
+
+# Setup environment
+python -m venv brain-env
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+.\brain-env\Scripts\Activate.ps1
+pip install -e .
+
+# Run baseline experiment
+python main.py --config config/experiment_configs.yaml --experiment baseline --subjects 01 02 03 04 05 --output results/baseline --plot
+
+# Run neural network experiment
+python main.py --config config/experiment_configs.yaml --experiment neural_networks --subjects 01 02 03 04 05 --output results/neural --plot
+
+# Run hyperparameter search
+python -c "
+from experiments.experiment_runner import ExperimentRunner
+from data.loaders import FMRIDataLoader
+import numpy as np
+
+runner = ExperimentRunner('config/experiment_configs.yaml')
+loader = FMRIDataLoader({'data_path': 'data/raw'})
+
+# Load sample data
+X, _ = loader.load_fmri_data('01')
+y = loader.load_stimulus_labels('01')
+
+# Search SVM hyperparameters
+param_grid = {
+    'C': [0.1, 1.0, 10.0],
+    'kernel': ['rbf', 'linear'],
+    'gamma': ['scale', 'auto']
+}
+
+results = runner.run_hyperparameter_search('svm', param_grid, X, y)
+print('Best parameters:', results['best_params'])
+print('Best score:', results['best_score'])
+"
 ```
 
 ### Python API
@@ -104,34 +147,35 @@ runner.save_experiment_results(results, 'results/my_experiment.json')
 ```
 multimodal_stimulus_fmri_predict/
 ├── config/                    # Configuration files
-│   ├── base_config.py
-│   ├── model_configs.py
-│   └── experiment_configs.yaml
+│   ├── base_config.py  -
+│   ├── model_configs.py  -
+│   └── experiment_configs.yaml -
 ├── data/                      # Data handling
-│   ├── loaders.py            # fMRI data loading
-│   ├── preprocessors.py      # Data preprocessing
+│   ├── ✔️ loaders.py   -        # fMRI data loading
+│   ├── preprocessors.py  -    # Data preprocessing
 │   └── transforms.py         # Data transformations
 ├── models/                    # Classifier implementations
-│   ├── base_classifier.py    # Abstract base class
+│   ├── ✔️ base_classifier.py  -  # Abstract base class
 │   ├── classical/            # Traditional ML methods
-│   │   ├── svm.py
-│   │   ├── random_forest.py
-│   │   └── logistic_regression.py
+│   │   ├── svm.py  -
+│   │   ├── random_forest.py  -
+│   │   └── logistic_regression.py  - 
 │   ├── neural/               # Neural network methods
-│   │   ├── mlp.py
-│   │   ├── cnn.py
-│   │   ├── lstm.py
-│   │   └── transformer.py
+│   │   ├── mlp.py  -
+│   │   ├── cnn.py  -
+│   │   ├── lstm.py -
+│   │   └── transformer.py  -
 │   └── ensemble/             # Ensemble methods
-│       ├── voting.py
-│       └── stacking.py
+│       ├── voting.py   -
+│       └── stacking.py -
 ├── utils/                     # Utility functions
-│   ├── metrics.py            # Evaluation metrics
-│   ├── visualization.py     # Plotting functions
-│   └── io_utils.py          # I/O operations
+│   ├── metrics.py     -       # Evaluation metrics
+│   ├── visualization.py   -    # Plotting functions
+│   └── io_utils.py  -        # I/O operations
 ├── experiments/              # Experiment management
-│   ├── experiment_runner.py
-│   └── hyperparameter_search.py
+│   ├── experiment_runner.py  -
+│   └── hyperparameter_search.py   -
+└── ✔️ attention.py 
 └── main.py                   # Main execution script
 ```
 
@@ -543,6 +587,8 @@ K-fold cross-validation score:
 
 $$CV_{score} = \frac{1}{K}\sum_{k=1}^{K} \text{Accuracy}_k$$
 ```
+
+
 Standard error:
 
 ```latex
