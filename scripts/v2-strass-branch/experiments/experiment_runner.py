@@ -17,7 +17,7 @@ sys.path.insert(0, str(project_root))
 
 # Import necessary modules from the project
 from models import ClassifierFactory
-from data.loaders import FMRIDataLoader
+from data.loaders import MultimodalDataLoader
 #from utils.metrics import ModelEvaluator
 #from utils.io_utils import save_results, load_results
 
@@ -28,7 +28,7 @@ class ExperimentRunner:
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
         
-        self.data_loader = FMRIDataLoader(self.config['data'])
+        self.data_loader = MultimodalDataLoader(self.config['data'])
         #self.evaluator = ModelEvaluator()
         self.results = {}
         

@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 import nibabel as nib
 from pathlib import Path
 
-class FMRIDataLoader:
+class MultimodalDataLoader:
     """
     Loader class for handling fMRI data and associated stimulus labels.
     

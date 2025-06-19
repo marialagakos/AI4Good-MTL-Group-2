@@ -2,11 +2,43 @@
 experiments:
   baseline:
     classifiers:
+      # OLS
+      - type: "linear_regression"  
+        config:
+          fit_intercept: true  # Whether to calculate intercept
+          normalize: true     # False = Don't use ? - prefer preprocessing standardization
+          standardize: true     # Critical for OLS
+          #copy_X: true         # Copy or overwrite input data
+          #n_jobs: -1           # Parallel processing - use all cores (?)
+          positive: false      # Force positive coefficients
+          data:
+        #modalities: ["fmri", "behavioral"]  # Your modalities
+        #preprocessing:
+        #standardize: true        # Critical for OLS
+      #feature_selection: false # Start simple
+      #model:
+        #type: "ols"
+        #config:
+          #fit_intercept: true      # Always include intercept
+          #copy_X: true             # Safer memory handling
+      #evaluation:
+        #metrics: 
+          #regression: ["mse", "r2"]
+          #classification: ["accuracy", "roc_auc"] 
+        #cross_validation:
+          #folds: 5
+          #shuffle: true
       - type: "svm"
         config:
           C: 1.0
           kernel: "rbf"
           gamma: "scale"
+      - type: "mlp"
+        config:
+          hidden_dims: [512, 256, 128]
+          dropout_rate: 0.3
+          learning_rate: 0.001
+          batch_size: 32
       - type: "random_forest"
         config:
           n_estimators: 100

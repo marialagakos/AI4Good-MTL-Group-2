@@ -101,11 +101,11 @@ python main.py --config config/experiment_configs.yaml --experiment neural_netwo
 # Run hyperparameter search
 python -c "
 from experiments.experiment_runner import ExperimentRunner
-from data.loaders import FMRIDataLoader
+from data.loaders import MultimodalDataLoader
 import numpy as np
 
 runner = ExperimentRunner('config/experiment_configs.yaml')
-loader = FMRIDataLoader({'data_path': 'data/raw'})
+loader = MultimodalDataLoader({'data_path': 'data/raw'})
 
 # Load sample data
 X, _ = loader.load_fmri_data('01')
@@ -128,7 +128,7 @@ print('Best score:', results['best_score'])
 
 ```python
 from experiments.experiment_runner import ExperimentRunner
-from data.loaders import FMRIDataLoader
+from data.loaders import MultimodalDataLoader
 
 # Initialize experiment runner
 runner = ExperimentRunner('config/experiment_configs.yaml')
@@ -145,7 +145,7 @@ runner.save_experiment_results(results, 'results/my_experiment.json')
 ### Project Structure
 
 ```
-multimodal_stimulus_fmri_predict/
+cere/
 ├── config/                    # Configuration files
 │   ├── base_config.py  -
 │   ├── model_configs.py  -
@@ -157,6 +157,7 @@ multimodal_stimulus_fmri_predict/
 ├── models/                    # Classifier implementations
 │   ├── ✔️ base_classifier.py  -  # Abstract base class
 │   ├── classical/            # Traditional ML methods
+│   │   ├── linear_regression.py  # Baseline
 │   │   ├── svm.py  -
 │   │   ├── random_forest.py  -
 │   │   └── logistic_regression.py  - 
@@ -175,6 +176,8 @@ multimodal_stimulus_fmri_predict/
 ├── experiments/              # Experiment management
 │   ├── experiment_runner.py  -
 │   └── hyperparameter_search.py   -
+├── tests/
+│   └── test_config_validation.py
 └── ✔️ attention.py 
 └── main.py                   # Main execution script
 ```
@@ -216,15 +219,59 @@ classifier = ClassifierFactory.create_classifier('svm', config)
 
 YAML configuration files define experiment parameters:
 
+Here's a concise yet comprehensive summary of your YAML configuration file:
+
+### YAML Configuration Summary
+
+#### 1. **Experiment Structure**
+
+- Organized in hierarchical groups:
+  ```yaml
+  experiments:
+    baseline:        # Classical ML models
+    neural_networks: # Neural network approaches  
+    advanced:        # Cutting-edge architectures
+  ```
+
+#### 2. **Key Components**
+
+- **Classifiers**: Each experiment group contains multiple classifier configurations
+- **Global Settings**: Data paths, preprocessing, and cross-validation parameters apply to all experiments
+
+#### 3. **Linear Regression (OLS) Specifics**
+
 ```yaml
-experiments:
-  baseline:
-    classifiers:
-      - type: "svm"
-        config:
-          C: 1.0
-          kernel: "rbf"
+- type: "linear_regression"
+  config:
+    fit_intercept: true  # Essential for proper modeling
+    normalize: true      # Deprecated - use preprocessing standardization instead
+    positive: false      # Allows negative coefficients
 ```
+
+#### 4. **Critical Global Parameters**
+
+```yaml
+preprocessing:
+  standardize: true      # Required for OLS performance
+  dimensionality_reduction:
+    method: "pca"        # Manages high-dimensional fMRI data
+    n_components: 1000   # Adjust based on feature importance
+
+cross_validation:
+  n_folds: 5             # Robust evaluation
+  shuffle: true          # Prevents order bias
+```
+
+#### 5. **Modular Design Features**
+- **Flexible Classifier Swapping**: Add/remove models by editing the list
+- **Parameter Inheritance**: Global settings automatically apply to all classifiers
+- **Task Agnostic**: Same structure works for both regression and classification
+
+#### 6. **Execution Control**
+- Run specific experiment groups or individual classifiers via command-line arguments
+- Example: `python main.py --experiment baseline --classifiers linear_regression svm`
+
+This configuration provides a balance between flexibility and structure, allowing you to run anything from quick OLS tests to comprehensive multimodal comparisons while maintaining reproducible results.
 
 ## 💻 Usage
 
@@ -260,8 +307,8 @@ config = {'C': 10.0, 'kernel': 'linear'}
 classifier = ClassifierFactory.create_classifier('svm', config)
 
 # Load data and train
-from data.loaders import FMRIDataLoader
-loader = FMRIDataLoader({'data_path': 'data/raw'})
+from data.loaders import MultimodalDataLoader
+loader = MultimodalDataLoader({'data_path': 'data/raw'})
 X, _ = loader.load_fmri_data('01')
 y = loader.load_stimulus_labels('01')
 
@@ -370,7 +417,7 @@ Factory class for creating classifier instances.
 - `create_classifier(classifier_type, config)`: Create classifier instance
 - `get_available_classifiers()`: List available classifier types
 
-#### FMRIDataLoader
+#### MultimodalDataLoader
 Handles loading and preprocessing of fMRI data.
 
 **Methods:**
@@ -429,10 +476,10 @@ print(f"Best accuracy: {results['summary']['best_accuracy']:.4f}")
 
 ```python
 from experiments.experiment_runner import ExperimentRunner
-from data.loaders import FMRIDataLoader
+from data.loaders import MultimodalDataLoader
 
 # Load data
-loader = FMRIDataLoader({'data_path': 'data/raw'})
+loader = MultimodalDataLoader({'data_path': 'data/raw'})
 X, _ = loader.load_fmri_data('01')
 y = loader.load_stimulus_labels('01')
 

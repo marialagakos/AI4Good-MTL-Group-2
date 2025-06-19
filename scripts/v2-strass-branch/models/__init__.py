@@ -1,3 +1,19 @@
+"""
+This module defines the ClassifierFactory, a centralized factory for constructing 
+various classifier models used in the multimodal fMRI stimulus prediction framework. 
+It supports classical (SVM, logistic regression, random forest) and neural models 
+(MLP, CNN, LSTM, Transformer, and Self-Attention), enabling flexible, pluggable 
+architecture for experimentation. The factory adheres to the SOLID principles and 
+follows a scalable design pattern for easy integration of new classifiers.
+
+Test coverage includes successful instantiation of classifiers via the factory,
+verification of model configuration through initialization, and basic usage of 
+fit/predict on at least one model (SVM). However, full unit test coverage for all 
+models and edge case validations (e.g., malformed configs, incompatible input shapes) 
+is not yet implemented. Further tests are recommended to ensure interface compliance 
+and runtime safety across all classifiers.
+"""
+
 # models/__init__.py
 from typing import Dict, Any
 from models.base_classifier import BaseClassifier
@@ -30,7 +46,7 @@ class ClassifierFactory:
     def create_classifier(cls, classifier_type: str, config: Dict[str, Any]) -> BaseClassifier:
         """Create a classifier instance"""
         if classifier_type not in cls._classifiers:
-            raise ValueError(f"Unknown classifier type: {classifier_type}")
+            raise ValueError(f"Unknown classifier type: '{classifier_type}'. Available: {list(cls._classifiers.keys())}")
         
         return cls._classifiers[classifier_type](config)
     
