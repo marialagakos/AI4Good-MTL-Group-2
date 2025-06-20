@@ -6,14 +6,16 @@
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["data", "models", "configs", "experiments", "utils"]
 
 [project]
-name = "multimodal-stimulus-fmri-prediction"
+name = "cere"
 version = "0.0.1"
 authors = [
 ]
 description = "Description"
-readme = "README.md"
+readme = "README-v2-strass-branch.md"
 requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -33,7 +35,10 @@ dependencies = [ "numpy==1.26.4",
   "torchvision==0.15.2",
   "pytorchvideo==0.1.5",
   "transformers==4.33.3"
-
+  # viz packages
+  "matplotlib",
+  "great_tables"
+  "seaborn"
   ]
 
 [project.urls]

@@ -229,3 +229,10 @@ $TestScriptPath = Join-Path $ProjectRoot "test_imports.py"
 Set-Content -Path $TestScriptPath -Value $TestScript
 Write-Host "`nCreated test script: test_imports.py" -ForegroundColor Green
 Write-Host "Run it with: python test_imports.py" -ForegroundColor Cyan
+
+# Add this new section after all your existing code
+Write-Host "`nRunning basic tests..." -ForegroundColor Yellow
+pytest tests/test_config_validation.py -v
+
+Write-Host "`nQuick verification command:" -ForegroundColor Cyan
+Write-Host "python -c `"from models.base_classifier import BaseClassifier; print('✓ Base imports work')`""
