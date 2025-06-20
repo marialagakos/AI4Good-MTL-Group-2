@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Test script to verify all imports work correctly."""
+"""
+Test script to verify all imports work correctly.
+"""
 
 import sys
 import traceback
